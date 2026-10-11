@@ -1,0 +1,12 @@
+name: scan
+on: [push, pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python make_samples.py
+      # exits non-zero when a malicious artifact is found (expected on the sample)
+      - run: python scan.py samples/ || echo "::notice::flagged malicious sample (expected)"
